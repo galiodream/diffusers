@@ -736,74 +736,85 @@ def _maybe_download_kernel_for_backend(backend: AttentionBackendName) -> None:
 # Registrations are required for fullgraph tracing compatibility
 # TODO: this is only required because the beta release FA3 does not have it. There is a PR adding
 # this but it was never merged: https://github.com/Dao-AILab/flash-attention/pull/1590
-@_custom_op("_diffusers_flash_attn_3::_flash_attn_forward", mutates_args=(), device_types="cuda")
-def _wrapped_flash_attn_3(
-    q: torch.Tensor,
-    k: torch.Tensor,
-    v: torch.Tensor,
-    softmax_scale: float | None = None,
-    causal: bool = False,
-    qv: torch.Tensor | None = None,
-    q_descale: torch.Tensor | None = None,
-    k_descale: torch.Tensor | None = None,
-    v_descale: torch.Tensor | None = None,
-    attention_chunk: int = 0,
-    softcap: float = 0.0,
-    num_splits: int = 1,
-    pack_gqa: bool | None = None,
-    deterministic: bool = False,
-    sm_margin: int = 0,
-) -> tuple[torch.Tensor, torch.Tensor]:
-    # Hardcoded for now because pytorch does not support tuple/int type hints
-    window_size = (-1, -1)
-    result = flash_attn_3_func(
-        q=q,
-        k=k,
-        v=v,
-        softmax_scale=softmax_scale,
-        causal=causal,
-        qv=qv,
-        q_descale=q_descale,
-        k_descale=k_descale,
-        v_descale=v_descale,
-        window_size=window_size,
-        attention_chunk=attention_chunk,
-        softcap=softcap,
-        num_splits=num_splits,
-        pack_gqa=pack_gqa,
-        deterministic=deterministic,
-        sm_margin=sm_margin,
-        return_attn_probs=True,
+if _CAN_USE_FLASH_ATTN_3:
+
+    @_custom_op(
+        "_diffusers_flash_attn_3::_flash_attn_forward",
+        mutates_args=(),
+        device_types="cuda",
+        schema="(Tensor q, Tensor k, Tensor v, float? softmax_scale=None, bool causal=False, Tensor? qv=None, Tensor? q_descale=None, Tensor? k_descale=None, Tensor? v_descale=None, int attention_chunk=0, float softcap=0.0, int num_splits=1, bool? pack_gqa=None, bool deterministic=False, int sm_margin=0) -> (Tensor, Tensor)",
     )
-    out, lse, *_ = result
-    lse = lse.permute(0, 2, 1)
-    return out, lse
+    def _wrapped_flash_attn_3(
+        q: torch.Tensor,
+        k: torch.Tensor,
+        v: torch.Tensor,
+        softmax_scale: float | None = None,
+        causal: bool = False,
+        qv: torch.Tensor | None = None,
+        q_descale: torch.Tensor | None = None,
+        k_descale: torch.Tensor | None = None,
+        v_descale: torch.Tensor | None = None,
+        attention_chunk: int = 0,
+        softcap: float = 0.0,
+        num_splits: int = 1,
+        pack_gqa: bool | None = None,
+        deterministic: bool = False,
+        sm_margin: int = 0,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        # Hardcoded for now because pytorch does not support tuple/int type hints
+        window_size = (-1, -1)
+        result = flash_attn_3_func(
+            q=q,
+            k=k,
+            v=v,
+            softmax_scale=softmax_scale,
+            causal=causal,
+            qv=qv,
+            q_descale=q_descale,
+            k_descale=k_descale,
+            v_descale=v_descale,
+            window_size=window_size,
+            attention_chunk=attention_chunk,
+            softcap=softcap,
+            num_splits=num_splits,
+            pack_gqa=pack_gqa,
+            deterministic=deterministic,
+            sm_margin=sm_margin,
+            return_attn_probs=True,
+        )
+        out, lse, *_ = result
+        lse = lse.permute(0, 2, 1)
+        return out, lse
 
 
-@_register_fake("_diffusers_flash_attn_3::_flash_attn_forward")
-def _(
-    q: torch.Tensor,
-    k: torch.Tensor,
-    v: torch.Tensor,
-    softmax_scale: float | None = None,
-    causal: bool = False,
-    qv: torch.Tensor | None = None,
-    q_descale: torch.Tensor | None = None,
-    k_descale: torch.Tensor | None = None,
-    v_descale: torch.Tensor | None = None,
-    attention_chunk: int = 0,
-    softcap: float = 0.0,
-    num_splits: int = 1,
-    pack_gqa: bool | None = None,
-    deterministic: bool = False,
-    sm_margin: int = 0,
-) -> tuple[torch.Tensor, torch.Tensor]:
-    window_size = (-1, -1)  # noqa: F841
-    # A lot of the parameters here are not yet used in any way within diffusers.
-    # We can safely ignore for now and keep the fake op shape propagation simple.
-    batch_size, seq_len, num_heads, head_dim = q.shape
-    lse_shape = (batch_size, seq_len, num_heads)
-    return torch.empty_like(q), q.new_empty(lse_shape)
+    @_register_fake("_diffusers_flash_attn_3::_flash_attn_forward")
+    def _(
+        q: torch.Tensor,
+        k: torch.Tensor,
+        v: torch.Tensor,
+        softmax_scale: float | None = None,
+        causal: bool = False,
+        qv: torch.Tensor | None = None,
+        q_descale: torch.Tensor | None = None,
+        k_descale: torch.Tensor | None = None,
+        v_descale: torch.Tensor | None = None,
+        attention_chunk: int = 0,
+        softcap: float = 0.0,
+        num_splits: int = 1,
+        pack_gqa: bool | None = None,
+        deterministic: bool = False,
+        sm_margin: int = 0,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        window_size = (-1, -1)  # noqa: F841
+        # A lot of the parameters here are not yet used in any way within diffusers.
+        # We can safely ignore for now and keep the fake op shape propagation simple.
+        batch_size, seq_len, num_heads, head_dim = q.shape
+        lse_shape = (batch_size, seq_len, num_heads)
+        return torch.empty_like(q), q.new_empty(lse_shape)
+else:
+
+    def _wrapped_flash_attn_3(*args, **kwargs):
+        raise RuntimeError("flash_attn_3 is not available in the current environment.")
 
 
 # ===== Helper functions to use attention backends with templated CP autograd functions =====

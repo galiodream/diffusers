@@ -1,57 +1,69 @@
+import importlib
+
 from ...utils import is_torch_available
 
 
+def _optional_import(module_name, class_names):
+    try:
+        module = importlib.import_module(f"{__name__}.{module_name}")
+    except Exception:
+        return
+
+    for class_name in class_names:
+        globals()[class_name] = getattr(module, class_name)
+
+
 if is_torch_available():
-    from .auraflow_transformer_2d import AuraFlowTransformer2DModel
-    from .cogvideox_transformer_3d import CogVideoXTransformer3DModel
-    from .consisid_transformer_3d import ConsisIDTransformer3DModel
-    from .dit_transformer_2d import DiTTransformer2DModel
-    from .dual_transformer_2d import DualTransformer2DModel
-    from .hunyuan_transformer_2d import HunyuanDiT2DModel
-    from .latte_transformer_3d import LatteTransformer3DModel
-    from .lumina_nextdit2d import LuminaNextDiT2DModel
-    from .pixart_transformer_2d import PixArtTransformer2DModel
-    from .prior_transformer import PriorTransformer
-    from .sana_transformer import SanaTransformer2DModel
-    from .stable_audio_transformer import StableAudioDiTModel
-    from .t5_film_transformer import T5FilmDecoder
-    from .transformer_2d import Transformer2DModel
-    from .transformer_allegro import AllegroTransformer3DModel
-    from .transformer_bria import BriaTransformer2DModel
-    from .transformer_bria_fibo import BriaFiboTransformer2DModel
-    from .transformer_chroma import ChromaTransformer2DModel
-    from .transformer_chronoedit import ChronoEditTransformer3DModel
-    from .transformer_cogview3plus import CogView3PlusTransformer2DModel
-    from .transformer_cogview4 import CogView4Transformer2DModel
-    from .transformer_cosmos import CosmosTransformer3DModel
-    from .transformer_easyanimate import EasyAnimateTransformer3DModel
-    from .transformer_ernie_image import ErnieImageTransformer2DModel
-    from .transformer_flux import FluxTransformer2DModel
-    from .transformer_flux2 import Flux2Transformer2DModel
-    from .transformer_glm_image import GlmImageTransformer2DModel
-    from .transformer_helios import HeliosTransformer3DModel
-    from .transformer_hidream_image import HiDreamImageTransformer2DModel
-    from .transformer_hunyuan_video import HunyuanVideoTransformer3DModel
-    from .transformer_hunyuan_video15 import HunyuanVideo15Transformer3DModel
-    from .transformer_hunyuan_video_framepack import HunyuanVideoFramepackTransformer3DModel
-    from .transformer_hunyuanimage import HunyuanImageTransformer2DModel
-    from .transformer_kandinsky import Kandinsky5Transformer3DModel
-    from .transformer_longcat_audio_dit import LongCatAudioDiTTransformer
-    from .transformer_longcat_image import LongCatImageTransformer2DModel
-    from .transformer_ltx import LTXVideoTransformer3DModel
-    from .transformer_ltx2 import LTX2VideoTransformer3DModel
-    from .transformer_lumina2 import Lumina2Transformer2DModel
-    from .transformer_mochi import MochiTransformer3DModel
-    from .transformer_nucleusmoe_image import NucleusMoEImageTransformer2DModel
-    from .transformer_omnigen import OmniGenTransformer2DModel
-    from .transformer_ovis_image import OvisImageTransformer2DModel
-    from .transformer_prx import PRXTransformer2DModel
-    from .transformer_qwenimage import QwenImageTransformer2DModel
-    from .transformer_sana_video import SanaVideoTransformer3DModel
-    from .transformer_sd3 import SD3Transformer2DModel
-    from .transformer_skyreels_v2 import SkyReelsV2Transformer3DModel
-    from .transformer_temporal import TransformerTemporalModel
-    from .transformer_wan import WanTransformer3DModel
-    from .transformer_wan_animate import WanAnimateTransformer3DModel
-    from .transformer_wan_vace import WanVACETransformer3DModel
-    from .transformer_z_image import ZImageTransformer2DModel
+    _optional_import("auraflow_transformer_2d", ["AuraFlowTransformer2DModel"])
+    _optional_import("cogvideox_transformer_3d", ["CogVideoXTransformer3DModel"])
+    _optional_import("consisid_transformer_3d", ["ConsisIDTransformer3DModel"])
+    _optional_import("dit_transformer_2d", ["DiTTransformer2DModel"])
+    _optional_import("dual_transformer_2d", ["DualTransformer2DModel"])
+    _optional_import("hunyuan_transformer_2d", ["HunyuanDiT2DModel"])
+    _optional_import("latte_transformer_3d", ["LatteTransformer3DModel"])
+    _optional_import("lumina_nextdit2d", ["LuminaNextDiT2DModel"])
+    _optional_import("pixart_transformer_2d", ["PixArtTransformer2DModel"])
+    _optional_import("prior_transformer", ["PriorTransformer"])
+    _optional_import("sana_transformer", ["SanaTransformer2DModel"])
+    _optional_import("stable_audio_transformer", ["StableAudioDiTModel"])
+    _optional_import("t5_film_transformer", ["T5FilmDecoder"])
+    _optional_import("transformer_2d", ["Transformer2DModel"])
+    _optional_import("transformer_allegro", ["AllegroTransformer3DModel"])
+    _optional_import("transformer_bria", ["BriaTransformer2DModel"])
+    _optional_import("transformer_bria_fibo", ["BriaFiboTransformer2DModel"])
+    _optional_import("transformer_chroma", ["ChromaTransformer2DModel"])
+    _optional_import("transformer_chronoedit", ["ChronoEditTransformer3DModel"])
+    _optional_import("transformer_cogview3plus", ["CogView3PlusTransformer2DModel"])
+    _optional_import("transformer_cogview4", ["CogView4Transformer2DModel"])
+    _optional_import("transformer_cosmos", ["CosmosTransformer3DModel"])
+    _optional_import("transformer_easyanimate", ["EasyAnimateTransformer3DModel"])
+    _optional_import("transformer_ernie_image", ["ErnieImageTransformer2DModel"])
+    _optional_import("transformer_flux", ["FluxTransformer2DModel"])
+    _optional_import("transformer_flux2", ["Flux2Transformer2DModel"])
+    _optional_import("transformer_glm_image", ["GlmImageTransformer2DModel"])
+    _optional_import("transformer_helios", ["HeliosTransformer3DModel"])
+    _optional_import("transformer_hidream_image", ["HiDreamImageTransformer2DModel"])
+    _optional_import("transformer_hunyuan_video", ["HunyuanVideoTransformer3DModel"])
+    _optional_import("transformer_hunyuan_video15", ["HunyuanVideo15Transformer3DModel"])
+    _optional_import("transformer_hunyuan_video_framepack", ["HunyuanVideoFramepackTransformer3DModel"])
+    _optional_import("transformer_hunyuanimage", ["HunyuanImageTransformer2DModel"])
+    _optional_import("transformer_kandinsky", ["Kandinsky5Transformer3DModel"])
+    _optional_import("transformer_longcat_audio_dit", ["LongCatAudioDiTTransformer"])
+    _optional_import("transformer_longcat_image", ["LongCatImageTransformer2DModel"])
+    _optional_import("transformer_ltx", ["LTXVideoTransformer3DModel"])
+    _optional_import("transformer_ltx2", ["LTX2VideoTransformer3DModel"])
+    _optional_import("transformer_lumina2", ["Lumina2Transformer2DModel"])
+    _optional_import("transformer_mochi", ["MochiTransformer3DModel"])
+    _optional_import("transformer_nucleusmoe_image", ["NucleusMoEImageTransformer2DModel"])
+    _optional_import("transformer_omnigen", ["OmniGenTransformer2DModel"])
+    _optional_import("transformer_ovis_image", ["OvisImageTransformer2DModel"])
+    _optional_import("transformer_prx", ["PRXTransformer2DModel"])
+    _optional_import("transformer_qwenimage", ["QwenImageTransformer2DModel"])
+    _optional_import("transformer_sana_video", ["SanaVideoTransformer3DModel"])
+    _optional_import("transformer_sd3", ["SD3Transformer2DModel"])
+    _optional_import("transformer_skyreels_v2", ["SkyReelsV2Transformer3DModel"])
+    _optional_import("transformer_temporal", ["TransformerTemporalModel"])
+    _optional_import("transformer_wan", ["WanTransformer3DModel"])
+    _optional_import("transformer_wan_animate", ["WanAnimateTransformer3DModel"])
+    _optional_import("transformer_wan_vace", ["WanVACETransformer3DModel"])
+    _optional_import("transformer_z_image", ["ZImageTransformer2DModel"])
